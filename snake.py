@@ -8,6 +8,8 @@ import time
 #Some system parameters
 WINDOW_HEIGHT = 800
 WINDOW_WIDTH = 800
+X = 0
+Y = 1
 
 #Snake class
 class Snake:
@@ -19,7 +21,14 @@ class Snake:
         self.size = 10
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.colour, [self.currentPos[0], self.currentPos[1], self.size, self.size])
+        pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
+    
+    def moveX(self, xInc):
+        self.currentPos = [self.currentPos[X] + int(xInc), self.currentPos[Y]]
+
+    def moveY(self, yInc):
+        self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(yInc)]
+
 
 #Global methods
 def wiimoteSetup():
@@ -66,18 +75,22 @@ def main():
         #Handle user input
         if (wm.state['buttons'] & cwiid.BTN_LEFT):
             print('Left pressed')
+            snek1.moveY(snek1.size)
             time.sleep(0.2)         
 
         if(wm.state['buttons'] & cwiid.BTN_RIGHT):
             print('Right pressed')
+            snek1.moveY(-snek1.size)
             time.sleep(0.2)          
 
         if (wm.state['buttons'] & cwiid.BTN_UP):
-            print('Up pressed')        
+            print('Up pressed')  
+            snek1.moveX(-snek1.size)
             time.sleep(0.2)          
     
         if (wm.state['buttons'] & cwiid.BTN_DOWN):
             print('Down pressed')      
+            snek1.moveX(snek1.size)
             time.sleep(0.2)  
     
         if (wm.state['buttons'] & cwiid.BTN_1):

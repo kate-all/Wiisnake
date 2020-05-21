@@ -9,6 +9,7 @@ import random
 #Some system parameters
 WINDOW_HEIGHT = 400
 WINDOW_WIDTH = 400
+delay = 0.1
 X = 0
 Y = 1
 
@@ -107,71 +108,52 @@ def main():
         #Down
         if (wm.state['buttons'] & cwiid.BTN_LEFT):
             snek1.moveY(snek1.size)
-            time.sleep(0.2)         
+            time.sleep(delay)         
         
         #Up
-        if(wm.state['buttons'] & cwiid.BTN_RIGHT):
+        elif(wm.state['buttons'] & cwiid.BTN_RIGHT):
             snek1.moveY(-snek1.size)
-            time.sleep(0.2)          
+            time.sleep(delay)          
 
         #Left
-        if (wm.state['buttons'] & cwiid.BTN_UP):
+        elif (wm.state['buttons'] & cwiid.BTN_UP):
             snek1.moveX(-snek1.size)
-            time.sleep(0.2)          
+            time.sleep(delay)          
         
         #Right
-        if (wm.state['buttons'] & cwiid.BTN_DOWN):
+        elif (wm.state['buttons'] & cwiid.BTN_DOWN):
             snek1.moveX(snek1.size)
-            time.sleep(0.2)  
-    
-        if (wm.state['buttons'] & cwiid.BTN_1):
-            print('Button 1 pressed')
-            time.sleep(0.2)          
+            time.sleep(delay)  
 
-        if (wm.state['buttons'] & cwiid.BTN_2):
-            print('Button 2 pressed')
-            time.sleep(0.2)          
+        #if (wm.state['buttons'] & cwiid.BTN_A):
+        #    print('Button A pressed')
+        #    time.sleep(delay)          
 
-        if (wm.state['buttons'] & cwiid.BTN_A):
-            print('Button A pressed')
-            time.sleep(0.2)          
-
-        if (wm.state['buttons'] & cwiid.BTN_B):
-            print('Button B pressed')
-            time.sleep(0.2)          
-
-        if (wm.state['buttons'] & cwiid.BTN_HOME):
-            print('Home Button pressed')        
-            time.sleep(0.2)   
-    
-        if (wm.state['buttons'] & cwiid.BTN_MINUS):
-            print('Minus Button pressed')
-            time.sleep(0.2)   
-    
-        if (wm.state['buttons'] & cwiid.BTN_PLUS):
-            print('Plus Button pressed')
-            time.sleep(0.2)
-        
-        #draw background
+        #Draw background
         screen.fill([0,0,0])
         
-        #draw foreground
+        #Draw foreground
         currentFood.draw(screen)
         snek1.draw(screen)
-        
+
         #Check if...
-        #Snake Dies
+        #Snake hits the edge
         if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
                 (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT)):
             print("Game over")
             running = False
+
+        #Snake hits itself
+        #if snek1.currentPos in snek1.prevPos:
+        #    print("Game over 2")
+        #    running = False
 
         #Snake eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
             currentFood.move()
 
-        #refresh
+        #Refresh
         pygame.display.flip()
         clock.tick(300)  
 

@@ -9,6 +9,19 @@ import time
 WINDOW_HEIGHT = 800
 WINDOW_WIDTH = 800
 
+#Snake class
+class Snake:
+    def __init__ (self):
+        self.length = 1
+        self.currentPos = [int(WINDOW_WIDTH / 2), int(WINDOW_HEIGHT / 2)]
+        #self.prevPos = [currentPos] --> A list of size length previous positions for the snake's tail
+        self.colour = [255, 0, 0]
+        self.size = 10
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.colour, [self.currentPos[0], self.currentPos[1], self.size, self.size])
+
+#Global methods
 def wiimoteSetup():
     '''This function will connect the wii remote'''
     try:
@@ -36,6 +49,9 @@ def main():
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
+
+    #Initialize Snake object
+    snek1 = Snake()
     
     #Simulation loop:
     running = True
@@ -93,10 +109,10 @@ def main():
             time.sleep(0.2)
         
         #draw background
-        
+        screen.fill([0,0,0])
         
         #draw foreground
-        
+        snek1.draw(screen)
         
         #move objects
         

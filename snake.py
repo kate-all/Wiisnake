@@ -4,10 +4,11 @@
 import pygame
 import cwiid
 import time
+import random
 
 #Some system parameters
-WINDOW_HEIGHT = 800
-WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 400
 X = 0
 Y = 1
 
@@ -29,6 +30,15 @@ class Snake:
     def moveY(self, yInc):
         self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(yInc)]
 
+#Food class
+class Food:
+    def __init__(self):
+        self.colour = [255, 255, 0]
+        self.size = 5
+        self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size)]
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
 
 #Global methods
 def wiimoteSetup():
@@ -59,8 +69,9 @@ def main():
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
 
-    #Initialize Snake object
+    #Initialize Snake object and first food
     snek1 = Snake()
+    currentFood = Food()
     
     #Simulation loop:
     running = True
@@ -72,24 +83,24 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        #Handle user input
+        #Handle user input NOTE: Turn wiimote sideways
+        #Down
         if (wm.state['buttons'] & cwiid.BTN_LEFT):
-            print('Left pressed')
             snek1.moveY(snek1.size)
             time.sleep(0.2)         
-
+        
+        #Up
         if(wm.state['buttons'] & cwiid.BTN_RIGHT):
-            print('Right pressed')
             snek1.moveY(-snek1.size)
             time.sleep(0.2)          
 
+        #Left
         if (wm.state['buttons'] & cwiid.BTN_UP):
-            print('Up pressed')  
             snek1.moveX(-snek1.size)
             time.sleep(0.2)          
-    
+        
+        #Right
         if (wm.state['buttons'] & cwiid.BTN_DOWN):
-            print('Down pressed')      
             snek1.moveX(snek1.size)
             time.sleep(0.2)  
     
@@ -125,10 +136,13 @@ def main():
         screen.fill([0,0,0])
         
         #draw foreground
+        currentFood.draw(screen)
         snek1.draw(screen)
         
-        #move objects
-        
+        #Check if...
+        #Snake Dies
+
+        #Snake eats food
             
         #refresh
         pygame.display.flip()

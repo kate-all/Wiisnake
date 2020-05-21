@@ -141,8 +141,13 @@ def main():
         
         #Check if...
         #Snake Dies
+        if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
+                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT)):
+            print("Game over")
+            running = False
 
         #Snake eats food
+        
             
         #refresh
         pygame.display.flip()

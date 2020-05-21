@@ -17,28 +17,48 @@ class Snake:
     def __init__ (self):
         self.length = 1
         self.currentPos = [int(WINDOW_WIDTH / 2), int(WINDOW_HEIGHT / 2)]
-        #self.prevPos = [currentPos] --> A list of size length previous positions for the snake's tail
+        self.prevPos = [self.currentPos] #--> A list of size length previous positions for the snake's tail
         self.colour = [255, 0, 0]
         self.size = 10
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
+        for pos in self.prevPos:
+            pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
     
     def moveX(self, xInc):
         self.currentPos = [self.currentPos[X] + int(xInc), self.currentPos[Y]]
+        self.updateTail()
 
     def moveY(self, yInc):
         self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(yInc)]
+        self.updateTail()
+
+    def updateTail(self):
+        '''Updates the position of each of the tail segments'''
+        self.prevPos.append(self.currentPos)
+        self.prevPos.pop(0)
+
+    def eatFood(self):
+        '''Grows when food is eaten'''
+        self.length += 1
+        self.prevPos.append(self.currentPos)
+        self.prevPos[0] = self.currentPos
 
 #Food class
 class Food:
     def __init__(self):
         self.colour = [255, 255, 0]
-        self.size = 5
+        self.size = 10
         self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size)]
+        self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
+
+    def move(self):
+        self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size)]
+        self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
+
 
 #Global methods
 def wiimoteSetup():
@@ -146,9 +166,11 @@ def main():
             print("Game over")
             running = False
 
-        #Snake eats food
-        
-            
+        #Snake eats food 
+        if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
+            snek1.eatFood()
+            currentFood.move()
+
         #refresh
         pygame.display.flip()
         clock.tick(300)  

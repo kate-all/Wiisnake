@@ -21,18 +21,41 @@ class Snake:
         self.prevPos = [self.currentPos] #--> A list of size length previous positions for the snake's tail
         self.colour = [255, 0, 0]
         self.size = 10
+        self.headDir = 0
 
     def draw(self, screen):
         for pos in self.prevPos:
             pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
     
     def moveX(self, xInc):
+        '''Moves the snake along the x axis, updates the direction the head is moving
+        and updates the tail'''
+        #Move snake
         self.currentPos = [self.currentPos[X] + int(xInc), self.currentPos[Y]]
+
         self.updateTail()
+        
+        #Update headDir
+        if xInc == self.size:
+            self.headDir = "R"
+            
+        elif xInc == -self.size:
+            self.headDir = "L"
 
     def moveY(self, yInc):
+        '''Moves the snake along the y axis, updates the direction the head is moving
+        and updates the tail'''
+        #Move snake
         self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(yInc)]
+
         self.updateTail()
+
+        #Update headDir
+        if yInc == self.size:
+            self.headDir = "D"
+            
+        elif yInc == -self.size:
+            self.headDir = "U"
 
     def updateTail(self):
         '''Updates the position of each of the tail segments'''
@@ -41,9 +64,47 @@ class Snake:
 
     def eatFood(self):
         '''Grows when food is eaten'''
+        #Adding to the end of a long snake
+        if self.length > 1:
+            self.grow(self.findTailDir())
+        
+        #Adding to the end of a short snake
+        else:
+            self.grow(self.headDir)
+        
         self.length += 1
-        self.prevPos.append(self.currentPos)
-        self.prevPos[0] = self.currentPos
+        #self.draw()
+
+    def grow(self, direction):
+        '''Adds a block to the end of the snake'''
+        if direction == "R":
+            self.prevPos.insert(0, [self.prevPos[0][X] - self.size, self.prevPos[0][Y]])
+
+        elif direction == "L":
+            self.prevPos.insert(0, [self.prevPos[0][X] + self.size, self.prevPos[0][Y]])
+
+        elif direction == "U":
+            self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] + self.size])
+
+        elif direction == "D":
+            self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] - self.size])
+
+    def findTailDir(self):
+        '''Calculates the direction of the end of the snake's tail
+        Returns: A string with a letter (U,D,L,R) representing the direction of the end of the tail's movement'''
+        #Calc xDir
+        xDir = self.prevPos[1][X] - self.prevPos[0][X] 
+        if xDir == -10:
+            return "L"
+        elif xDir == 10:
+            return "R"
+
+        #Calc yDir
+        yDir = self.prevPos[1][Y] - self.prevPos[0][Y]
+        if yDir == -10:
+            return "U"
+        elif yDir == 10:
+            return "D"
 
 #Food class
 class Food:
@@ -105,6 +166,7 @@ def main():
                 running = False
 
         #Handle user input NOTE: Turn wiimote sideways
+        headDir = 0
         #Down
         if (wm.state['buttons'] & cwiid.BTN_LEFT):
             snek1.moveY(snek1.size)
@@ -123,6 +185,7 @@ def main():
         #Right
         elif (wm.state['buttons'] & cwiid.BTN_DOWN):
             snek1.moveX(snek1.size)
+            headDir = "R"
             time.sleep(delay)  
 
         #if (wm.state['buttons'] & cwiid.BTN_A):
@@ -144,9 +207,9 @@ def main():
             running = False
 
         #Snake hits itself
-        #if snek1.currentPos in snek1.prevPos:
-        #    print("Game over 2")
-        #    running = False
+        if snek1.currentPos in snek1.prevPos[:-1]:
+            print("Game over 2")
+            running = False
 
         #Snake eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):

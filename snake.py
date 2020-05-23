@@ -182,22 +182,26 @@ def main():
 
         #Handle user input NOTE: Turn wiimote sideways
         #Down
-        if (wm.state['buttons'] & cwiid.BTN_LEFT):
+        if ((wm.state['buttons'] & cwiid.BTN_LEFT) and
+                ((snek1.headDir != "U" and snek1.length > 1) or (snek1.length == 1))): #Snake cannot move on top of its tail
             snek1.headDir = "D"
             time.sleep(delay)         
         
         #Up
-        elif(wm.state['buttons'] & cwiid.BTN_RIGHT):
+        elif ((wm.state['buttons'] & cwiid.BTN_RIGHT) and 
+                ((snek1.headDir != "D" and snek1.length > 1) or (snek1.length == 1))):
             snek1.headDir = "U"
             time.sleep(delay)          
 
         #Left
-        elif (wm.state['buttons'] & cwiid.BTN_UP):
+        elif ((wm.state['buttons'] & cwiid.BTN_UP) and
+                ((snek1.headDir != "R" and snek1.length > 1) or (snek1.length == 1))): 
             snek1.headDir = "L"
             time.sleep(delay)          
         
         #Right
-        elif (wm.state['buttons'] & cwiid.BTN_DOWN):
+        elif ((wm.state['buttons'] & cwiid.BTN_DOWN) and 
+                ((snek1.headDir != "L" and snek1.length > 1) or (snek1.length == 1))):
             snek1.headDir = "R"
             time.sleep(delay)  
 

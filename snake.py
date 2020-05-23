@@ -9,7 +9,7 @@ import random
 #Some system parameters
 WINDOW_HEIGHT = 400
 WINDOW_WIDTH = 400
-delay = 0.1
+delay = 0.05
 X = 0
 Y = 1
 
@@ -21,12 +21,28 @@ class Snake:
         self.prevPos = [self.currentPos] #--> A list of size length previous positions for the snake's tail
         self.colour = [255, 0, 0]
         self.size = 10
-        self.headDir = 0
+        self.headDir = 'R'
 
     def draw(self, screen):
         for pos in self.prevPos:
             pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
     
+    def move(self, inc):
+        '''This function will move the snake one increment in the direction its head is travelling'''
+        if self.headDir == "R":
+            self.currentPos = [self.currentPos[X] + int(inc), self.currentPos[Y]]
+
+        elif self.headDir == "L":
+            self.currentPos = [self.currentPos[X] - int(inc), self.currentPos[Y]]
+
+        elif self.headDir == "D":
+            self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(inc)]
+
+        elif self.headDir == "U":
+            self.currentPos = [self.currentPos[X], self.currentPos[Y] - int(inc)]
+
+        self.updateTail()
+
     def moveX(self, xInc):
         '''Moves the snake along the x axis, updates the direction the head is moving
         and updates the tail'''
@@ -73,7 +89,6 @@ class Snake:
             self.grow(self.headDir)
         
         self.length += 1
-        #self.draw()
 
     def grow(self, direction):
         '''Adds a block to the end of the snake'''
@@ -151,7 +166,7 @@ def main():
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
 
-    #Initialize Snake object and first food
+    #Initialize Snake object and food
     snek1 = Snake()
     currentFood = Food()
     
@@ -166,31 +181,29 @@ def main():
                 running = False
 
         #Handle user input NOTE: Turn wiimote sideways
-        headDir = 0
         #Down
         if (wm.state['buttons'] & cwiid.BTN_LEFT):
-            snek1.moveY(snek1.size)
+            snek1.headDir = "D"
             time.sleep(delay)         
         
         #Up
         elif(wm.state['buttons'] & cwiid.BTN_RIGHT):
-            snek1.moveY(-snek1.size)
+            snek1.headDir = "U"
             time.sleep(delay)          
 
         #Left
         elif (wm.state['buttons'] & cwiid.BTN_UP):
-            snek1.moveX(-snek1.size)
+            snek1.headDir = "L"
             time.sleep(delay)          
         
         #Right
         elif (wm.state['buttons'] & cwiid.BTN_DOWN):
-            snek1.moveX(snek1.size)
-            headDir = "R"
+            snek1.headDir = "R"
             time.sleep(delay)  
 
-        #if (wm.state['buttons'] & cwiid.BTN_A):
-        #    print('Button A pressed')
-        #    time.sleep(delay)          
+        #Move Snake
+        snek1.move(snek1.size)
+        time.sleep(delay)
 
         #Draw background
         screen.fill([0,0,0])

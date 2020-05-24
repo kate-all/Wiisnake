@@ -24,6 +24,7 @@ class Snake:
         self.colour = [255, 0, 0]
         self.size = 10
         self.headDir = 0
+        self.growInc = 4
 
     def draw(self, screen):
         for pos in self.prevPos:
@@ -65,17 +66,18 @@ class Snake:
 
     def grow(self, direction):
         '''Adds a block to the end of the snake'''
-        if direction == "R":
-            self.prevPos.insert(0, [self.prevPos[0][X] - self.size, self.prevPos[0][Y]])
+        for i in range(1, self.growInc):
+            if direction == "R":
+                self.prevPos.insert(0, [self.prevPos[0][X] - self.size, self.prevPos[0][Y]])
 
-        elif direction == "L":
-            self.prevPos.insert(0, [self.prevPos[0][X] + self.size, self.prevPos[0][Y]])
+            elif direction == "L":
+                self.prevPos.insert(0, [self.prevPos[0][X] + self.size, self.prevPos[0][Y]])
 
-        elif direction == "U":
-            self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] + self.size])
+            elif direction == "U":
+                self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] + self.size])
 
-        elif direction == "D":
-            self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] - self.size])
+            elif direction == "D":
+                self.prevPos.insert(0, [self.prevPos[0][X], self.prevPos[0][Y] - self.size])
 
     def findTailDir(self):
         '''Calculates the direction of the end of the snake's tail

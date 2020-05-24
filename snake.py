@@ -7,7 +7,7 @@ import time
 import random
 
 #Some system parameters
-WINDOW_HEIGHT = 400
+WINDOW_HEIGHT = 450
 WINDOW_WIDTH = 400
 X = 0
 Y = 1
@@ -19,7 +19,7 @@ delay = 0.1
 class Snake:
     def __init__ (self):
         self.length = 1
-        self.currentPos = [int(WINDOW_WIDTH / 2), int(WINDOW_HEIGHT / 2)]
+        self.currentPos = [int(WINDOW_WIDTH / 2), int((WINDOW_HEIGHT - 50) / 2)]
         self.prevPos = [self.currentPos] #--> A list of size length previous positions for the snake's tail
         self.colour = [255, 0, 0]
         self.size = 10
@@ -107,9 +107,12 @@ class Food:
     def draw(self, screen):
         pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
 
-    def move(self):
-        self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size)]
-        self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
+    def move(self, snake1):
+        flag = True
+        while flag:
+            self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size - 50)]
+            self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
+            flag =  self.currentPos in snake1.prevPos
 
 
 #Global methods
@@ -142,6 +145,7 @@ def main():
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
+    pygame.display.set_caption("Snake")
 
     #Initialize Snake object and food
     snek1 = Snake()
@@ -193,10 +197,12 @@ def main():
         currentFood.draw(screen)
         snek1.draw(screen)
 
+        pygame.draw.rect(screen, [25,100,220], [0, WINDOW_HEIGHT - 50, WINDOW_WIDTH, 50]) #Bottom blue block
+
         #Check if...
         #Snake hits the edge
         if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
-                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT)):
+                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
             print("Game over")
             running = False
 
@@ -208,8 +214,8 @@ def main():
         #Snake eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
-            currentFood.move()
-           
+            currentFood.move(snek1)
+
             #Speed up snake
             if delay >= 0.04:
                 delay -= 0.003

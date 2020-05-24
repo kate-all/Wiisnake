@@ -9,9 +9,11 @@ import random
 #Some system parameters
 WINDOW_HEIGHT = 400
 WINDOW_WIDTH = 400
-delay = 0.05
 X = 0
 Y = 1
+
+#Global Variable
+delay = 0.1
 
 #Snake class
 class Snake:
@@ -21,7 +23,7 @@ class Snake:
         self.prevPos = [self.currentPos] #--> A list of size length previous positions for the snake's tail
         self.colour = [255, 0, 0]
         self.size = 10
-        self.headDir = 'R'
+        self.headDir = 0
 
     def draw(self, screen):
         for pos in self.prevPos:
@@ -42,36 +44,6 @@ class Snake:
             self.currentPos = [self.currentPos[X], self.currentPos[Y] - int(inc)]
 
         self.updateTail()
-
-    def moveX(self, xInc):
-        '''Moves the snake along the x axis, updates the direction the head is moving
-        and updates the tail'''
-        #Move snake
-        self.currentPos = [self.currentPos[X] + int(xInc), self.currentPos[Y]]
-
-        self.updateTail()
-        
-        #Update headDir
-        if xInc == self.size:
-            self.headDir = "R"
-            
-        elif xInc == -self.size:
-            self.headDir = "L"
-
-    def moveY(self, yInc):
-        '''Moves the snake along the y axis, updates the direction the head is moving
-        and updates the tail'''
-        #Move snake
-        self.currentPos = [self.currentPos[X], self.currentPos[Y] + int(yInc)]
-
-        self.updateTail()
-
-        #Update headDir
-        if yInc == self.size:
-            self.headDir = "D"
-            
-        elif yInc == -self.size:
-            self.headDir = "U"
 
     def updateTail(self):
         '''Updates the position of each of the tail segments'''
@@ -159,6 +131,8 @@ def testLEDs(wm):
         time.sleep(1)
 
 def main():
+    global delay
+
     #Set up wii remote
     wm = wiimoteSetup()
 
@@ -203,7 +177,7 @@ def main():
         elif ((wm.state['buttons'] & cwiid.BTN_DOWN) and 
                 ((snek1.headDir != "L" and snek1.length > 1) or (snek1.length == 1))):
             snek1.headDir = "R"
-            time.sleep(delay)  
+            time.sleep(delay) 
 
         #Move Snake
         snek1.move(snek1.size)
@@ -232,6 +206,10 @@ def main():
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
             currentFood.move()
+           
+            #Speed up snake
+            if delay >= 0.005:
+                delay -= 0.005
 
         #Refresh
         pygame.display.flip()

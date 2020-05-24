@@ -28,6 +28,7 @@ class Snake:
     def draw(self, screen):
         for pos in self.prevPos:
             pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
+            pygame.draw.rect(screen, [180,0,0], [pos[X], pos[Y], self.size, self.size], 1)
     
     def move(self, inc):
         '''This function will move the snake one increment in the direction its head is travelling'''
@@ -208,8 +209,8 @@ def main():
             currentFood.move()
            
             #Speed up snake
-            if delay >= 0.005:
-                delay -= 0.005
+            if delay >= 0.04:
+                delay -= 0.003
 
         #Refresh
         pygame.display.flip()

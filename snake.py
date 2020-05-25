@@ -12,6 +12,9 @@ WINDOW_WIDTH = 400
 X = 0
 Y = 1
 
+pygame.init()
+font = pygame.font.Font(None, 30)
+
 #Global Variable
 delay = 0.1
 
@@ -29,7 +32,7 @@ class Snake:
     def draw(self, screen):
         for pos in self.prevPos:
             pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
-            pygame.draw.rect(screen, [180,0,0], [pos[X], pos[Y], self.size, self.size], 1)
+            pygame.draw.rect(screen, [160,0,0], [pos[X], pos[Y], self.size, self.size], 1)
     
     def move(self, inc):
         '''This function will move the snake one increment in the direction its head is travelling'''
@@ -62,11 +65,12 @@ class Snake:
         else:
             self.grow(self.headDir)
         
-        self.length += 1
+        #Update length attribute
+        self.length += self.growInc
 
     def grow(self, direction):
         '''Adds a block to the end of the snake'''
-        for i in range(1, self.growInc):
+        for i in range(self.growInc):
             if direction == "R":
                 self.prevPos.insert(0, [self.prevPos[0][X] - self.size, self.prevPos[0][Y]])
 
@@ -198,6 +202,13 @@ def main():
         snek1.draw(screen)
 
         pygame.draw.rect(screen, [25,100,220], [0, WINDOW_HEIGHT - 50, WINDOW_WIDTH, 50]) #Bottom blue block
+
+        #Text
+        textLength = font.render("Length: " + str(snek1.length), True, [0,0,0])
+        screen.blit(textLength, [20,WINDOW_HEIGHT - textLength.get_height() - 15]) 
+
+        textHighScore = font.render("High Score: 100", True, [0,0,0])
+        screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 30, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
 
         #Check if...
         #Snake hits the edge

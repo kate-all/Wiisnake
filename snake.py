@@ -118,7 +118,6 @@ class Food:
             self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
             flag =  self.currentPos in snake1.prevPos
 
-
 #Global methods
 def wiimoteSetup():
     '''This function will connect the wii remote'''
@@ -150,6 +149,14 @@ def main():
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
     pygame.display.set_caption("Snake")
+
+    #Get high score
+    try:
+        hsFile = open("./highScore.txt", 'r')
+        currentHighScore = hsFile.readline().strip()
+    except:
+        print("Error opening hsFile")
+    hsFile.close()
 
     #Initialize Snake object and food
     snek1 = Snake()
@@ -207,8 +214,8 @@ def main():
         textLength = font.render("Length: " + str(snek1.length), True, [0,0,0])
         screen.blit(textLength, [20,WINDOW_HEIGHT - textLength.get_height() - 15]) 
 
-        textHighScore = font.render("High Score: 100", True, [0,0,0])
-        screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 30, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
+        textHighScore = font.render("High Score: " + currentHighScore, True, [0,0,0])
+        screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 40, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
 
         #Check if...
         #Snake hits the edge

@@ -139,6 +139,17 @@ def testLEDs(wm):
         wm.led = i
         time.sleep(1)
 
+def calcHighScore(highScore, currentScore):
+    '''Checks if a new high score has been earned, and replaces it if necessary'''
+    if currentScore > highScore:
+        try:
+            hsFile = open("./highScore.txt", 'w')
+            hsFile.write(str(currentScore))
+        except:
+            print("hsFile not opening")
+        
+        hsFile.close()
+
 def main():
     global delay
 
@@ -222,11 +233,13 @@ def main():
         if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
                 (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
             print("Game over")
+            calcHighScore(int(currentHighScore), snek1.length)
             running = False
 
         #Snake hits itself
         if snek1.currentPos in snek1.prevPos[:-1]:
             print("Game over 2")
+            calcHighScore(int(currentHighScore), snek1.length)
             running = False
 
         #Snake eats food 

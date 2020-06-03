@@ -140,7 +140,8 @@ def testLEDs(wm):
         time.sleep(1)
 
 def calcHighScore(highScore, currentScore):
-    '''Checks if a new high score has been earned, and replaces it if necessary'''
+    '''Checks if a new high score has been earned, and replaces it if necessary
+    Takes in: An integer representing the current high score and an integer representing the current score'''
     if currentScore > highScore:
         try:
             hsFile = open("./highScore.txt", 'w')
@@ -150,7 +151,44 @@ def calcHighScore(highScore, currentScore):
         
         hsFile.close()
 
-def main():
+def welcomeScreen():
+    '''Displays a welcome screen for user to connect their wii remote(s) to.'''
+
+    #Screen configs
+    screen = pygame.display.set_mode([400, 400])
+    screen.fill([250, 200, 150])
+    pygame.display.set_caption("Welcome!")
+    pygame.display.flip()
+
+    #Image configs
+    imgWiimote = pygame.image.load("./wiimote_diagram.png")
+    imgWiimote.convert()
+    imgWiimote = pygame.transform.rotozoom(imgWiimote, 90, 0.3)
+
+    imgWiimote2 = pygame.image.load("./wiimote_diagram.png")
+    imgWiimote2.convert()
+    imgWiimote2 = pygame.transform.rotozoom(imgWiimote2, 90, 0.3)
+
+    #Text config
+    titleTxt = "Welcome to Wiisnake!"
+    text = font.render(titleTxt, True, [0,0,0])
+
+    #Simulation
+    running = True
+    while running:
+        #Quit
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+        
+        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,40])
+        screen.blit(imgWiimote, [(400 - imgWiimote2.get_size()[0]) // 2, 120])
+        screen.blit(text, [(400 - font.size(titleTxt)[0]) // 2,10]) 
+
+        pygame.display.flip()
+
+def singlePlayerGame():
     global delay
 
     #Set up wii remote
@@ -255,4 +293,4 @@ def main():
         pygame.display.flip()
         clock.tick(300)  
 
-main()
+welcomeScreen()

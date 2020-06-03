@@ -120,13 +120,12 @@ class Food:
 
 #Global methods
 def wiimoteSetup(playerNum):
-    '''This function will connect the wii remote'''
+    '''This function will connect the wii remote and return it. If the wii
+    remote fails to connect, it will return a value of None'''
     try:
         wm = cwiid.Wiimote()
     except RuntimeError:
-        print("Can't connect wii remote")
-        quit()
-    print("Wii remote connected")
+        return None
 
     wm.rpt_mode = cwiid.RPT_BTN
     wm.led = playerNum
@@ -219,29 +218,38 @@ def welcomeScreen():
         while wm1 == None:
             wm1 = wiimoteSetup(1)
 
-            #Quit
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    running = False
-
         #Show connected remote image
         imgWiimote = wiimoteImgSetup("./wiimote_diagram_backup.png")
         screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
 
-        #Make A option appear
-        pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
-        screen.blit(text6, [150,375])
+        #Prompt single player game
+        if wm2 == None:
+            pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
+            screen.blit(text6, [150,375])
 
         pygame.display.flip()
 
-        #if wm1.state['buttons'] & cwiid.BTN_A:
+        #Start single player game
+        if wm1.state['buttons'] & cwiid.BTN_A:
+            singlePlayerGame(wm1)
+            running = False
 
-def singlePlayerGame():
+        else:
+            #Connect 2nd wii remote
+            if wm2 == None:
+                wm2 = wiimoteSetup(2)
+
+            #Update GUI for multiplayer mode
+            if wm2 != None:
+                imgWiimote2 = wiimoteImgSetup("./wiimote_diagram_backup.png")
+                screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2,remote1Pos + 100])
+                
+                #Prompt multiplayer game
+                pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
+                screen.blit(text7, [150,375])
+
+def singlePlayerGame(wm):
     global delay
-
-    #Set up wii remote
-    wm = wiimoteSetup(1)
 
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])

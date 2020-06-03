@@ -119,7 +119,7 @@ class Food:
             flag =  self.currentPos in snake1.prevPos
 
 #Global methods
-def wiimoteSetup():
+def wiimoteSetup(playerNum):
     '''This function will connect the wii remote'''
     try:
         wm = cwiid.Wiimote()
@@ -129,7 +129,7 @@ def wiimoteSetup():
     print("Wii remote connected")
 
     wm.rpt_mode = cwiid.RPT_BTN
-    wm.led = 1
+    wm.led = playerNum
 
     return wm
 
@@ -151,9 +151,19 @@ def calcHighScore(highScore, currentScore):
         
         hsFile.close()
 
+def wiimoteImgSetup(filePath):
+    '''Configures the wii remote image and returns the finished product'''
+    imgWiimote = pygame.image.load(filePath)
+    imgWiimote.convert()
+    imgWiimote = pygame.transform.rotozoom(imgWiimote, 90, 0.3)
+    return imgWiimote
+
 def welcomeScreen():
     '''Displays a welcome screen for user to connect their wii remote(s) to.'''
-
+    #wii remote objects
+    wm1 = None
+    wm2 = None
+    
     #Screen configs
     screen = pygame.display.set_mode([400, 400])
     screen.fill([250, 200, 150])
@@ -162,13 +172,8 @@ def welcomeScreen():
 
     #Image configs
     remote1Pos = 70
-    imgWiimote = pygame.image.load("./wiimote_diagram.png")
-    imgWiimote.convert()
-    imgWiimote = pygame.transform.rotozoom(imgWiimote, 90, 0.3)
-
-    imgWiimote2 = pygame.image.load("./wiimote_diagram.png")
-    imgWiimote2.convert()
-    imgWiimote2 = pygame.transform.rotozoom(imgWiimote2, 90, 0.3)
+    imgWiimote = wiimoteImgSetup("./wiimote_diagram.png")
+    imgWiimote2 = wiimoteImgSetup("./wiimote_diagram.png")
 
     #Text configs
     smallFont = pygame.font.Font(None, 20)
@@ -186,6 +191,9 @@ def welcomeScreen():
     mpTxt2 ="the desired player order, then press A on either remote." 
     text4 = smallFont.render(mpTxt, True, [0,0,0])
     text5 = smallFont.render(mpTxt2, True, [0,0,0])
+    
+    text6 = smallFont.render("Press A to start single player game", True, [255,255,255])
+    text7 = smallFont.render("Press A to start multiplayer game", True, [255,255,255])
 
     #Simulation
     running = True
@@ -196,8 +204,9 @@ def welcomeScreen():
             if event.type == pygame.QUIT:
                 running = False
         
+        #Display
         screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
-        screen.blit(imgWiimote, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
+        screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
         screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
         screen.blit(text2, [5,spTxtPos]) 
         screen.blit(text3, [5,spTxtPos + 15]) 
@@ -206,11 +215,33 @@ def welcomeScreen():
 
         pygame.display.flip()
 
+        #Connect Wiimote 1
+        while wm1 == None:
+            wm1 = wiimoteSetup(1)
+
+            #Quit
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    running = False
+
+        #Show connected remote image
+        imgWiimote = wiimoteImgSetup("./wiimote_diagram_backup.png")
+        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
+
+        #Make A option appear
+        pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
+        screen.blit(text6, [150,375])
+
+        pygame.display.flip()
+
+        #if wm1.state['buttons'] & cwiid.BTN_A:
+
 def singlePlayerGame():
     global delay
 
     #Set up wii remote
-    wm = wiimoteSetup()
+    wm = wiimoteSetup(1)
 
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])

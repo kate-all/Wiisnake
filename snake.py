@@ -161,6 +161,7 @@ def welcomeScreen():
     pygame.display.flip()
 
     #Image configs
+    remote1Pos = 70
     imgWiimote = pygame.image.load("./wiimote_diagram.png")
     imgWiimote.convert()
     imgWiimote = pygame.transform.rotozoom(imgWiimote, 90, 0.3)
@@ -169,9 +170,22 @@ def welcomeScreen():
     imgWiimote2.convert()
     imgWiimote2 = pygame.transform.rotozoom(imgWiimote2, 90, 0.3)
 
-    #Text config
+    #Text configs
+    smallFont = pygame.font.Font(None, 20)
     titleTxt = "Welcome to Wiisnake!"
-    text = font.render(titleTxt, True, [0,0,0])
+    text1 = font.render(titleTxt, True, [0,0,0])
+
+    spTxtPos = 60
+    spTxt = "For single player mode, press 1 and 2 on your wii remote" 
+    spTxt2 = "at the same time, and then press A."
+    text2 = smallFont.render(spTxt, True, [0,0,0])
+    text3 = smallFont.render(spTxt2, True, [0,0,0])
+
+    mpTxtPos = 120
+    mpTxt = "For multiplayer mode, press 1 and 2 on both wii remotes in"
+    mpTxt2 ="the desired player order, then press A on either remote." 
+    text4 = smallFont.render(mpTxt, True, [0,0,0])
+    text5 = smallFont.render(mpTxt2, True, [0,0,0])
 
     #Simulation
     running = True
@@ -182,9 +196,13 @@ def welcomeScreen():
             if event.type == pygame.QUIT:
                 running = False
         
-        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,40])
-        screen.blit(imgWiimote, [(400 - imgWiimote2.get_size()[0]) // 2, 120])
-        screen.blit(text, [(400 - font.size(titleTxt)[0]) // 2,10]) 
+        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
+        screen.blit(imgWiimote, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
+        screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
+        screen.blit(text2, [5,spTxtPos]) 
+        screen.blit(text3, [5,spTxtPos + 15]) 
+        screen.blit(text4, [5,mpTxtPos])
+        screen.blit(text5, [5,mpTxtPos + 15])
 
         pygame.display.flip()
 

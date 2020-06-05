@@ -201,6 +201,9 @@ def welcomeScreen():
     wlcTxt2 = "Press 1 and 2 on your other wii remote at the same time."
     text6 = smallFont.render(wlcTxt2, True, [0,0,0])
 
+    mpTxt = "Press A to start game"
+    text7 = smallFont.render(mpTxt, True, [255,255,255])
+
     #Simulation
     running = True
     while running:
@@ -271,6 +274,15 @@ def welcomeScreen():
             #Show blue wii remote
             imgWiimote2 = wiimoteImgSetup("./wiimote_diagram_backup.png") 
             screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
+
+            #Prompt multiplayer game start
+            drawCornerRect(screen)
+            screen.blit(text7, [255,375])
+
+            #Start game
+            if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2.state['buttons'] & cwiid.BTN_A):
+                print("it works")
+                multiplayerGame(wm1,wm2)
 
 def singlePlayerGame(wm):
     global delay
@@ -373,5 +385,8 @@ def singlePlayerGame(wm):
         #Refresh
         pygame.display.flip()
         clock.tick(300)  
+
+def multiplayerGame(wm1,wm2):
+    '''This is the multiplayer version of wiisnake'''
 
 welcomeScreen()

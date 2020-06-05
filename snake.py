@@ -350,4 +350,5 @@ def singlePlayerGame(wm):
         pygame.display.flip()
         clock.tick(300)  
 
+#Start program
 welcomeScreen()

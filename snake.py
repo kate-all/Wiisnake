@@ -132,11 +132,9 @@ def wiimoteSetup(playerNum):
 
     return wm
 
-def testLEDs(wm):
-    '''This function will test the LEDs on the wii remote'''
-    for i in range(16):
-        wm.led = i
-        time.sleep(1)
+def gameOverScreen():
+    '''Displays a game over message and provides the player options to play again,
+    return to the menu, or quit'''
 
 def calcHighScore(highScore, currentScore):
     '''Checks if a new high score has been earned, and replaces it if necessary
@@ -157,11 +155,19 @@ def wiimoteImgSetup(filePath):
     imgWiimote = pygame.transform.rotozoom(imgWiimote, 90, 0.3)
     return imgWiimote
 
+def drawCornerRect(screen):
+    pygame.draw.rect(screen, [0,0,0], [250, 373, 145, 20])
+
 def welcomeScreen():
     '''Displays a welcome screen for user to connect their wii remote(s) to.'''
-    #wii remote objects
+    #Wii remote objects
     wm1 = None
     wm2 = None
+
+    #Screen flags
+    screen1 = True
+    screen2 = False
+    screen3 = False
     
     #Screen configs
     screen = pygame.display.set_mode([400, 400])
@@ -170,29 +176,30 @@ def welcomeScreen():
     pygame.display.flip()
 
     #Image configs
-    remote1Pos = 70
+    remote1Pos = 50
     imgWiimote = wiimoteImgSetup("./wiimote_diagram.png")
     imgWiimote2 = wiimoteImgSetup("./wiimote_diagram.png")
 
     #Text configs
     smallFont = pygame.font.Font(None, 20)
+
     titleTxt = "Welcome to Wiisnake!"
     text1 = font.render(titleTxt, True, [0,0,0])
 
-    spTxtPos = 60
-    spTxt = "For single player mode, press 1 and 2 on your wii remote" 
-    spTxt2 = "at the same time, and then press A."
-    text2 = smallFont.render(spTxt, True, [0,0,0])
-    text3 = smallFont.render(spTxt2, True, [0,0,0])
+    wlcTxtPos = 70
+    wlcTxt = "To start, press 1 and 2 on your wii remote at the same time."
+    text2 = smallFont.render(wlcTxt, True, [0,0,0])
 
-    mpTxtPos = 120
-    mpTxt = "For multiplayer mode, press 1 and 2 on both wii remotes in"
-    mpTxt2 ="the desired player order, then press A on either remote." 
-    text4 = smallFont.render(mpTxt, True, [0,0,0])
-    text5 = smallFont.render(mpTxt2, True, [0,0,0])
-    
-    text6 = smallFont.render("Press A to start single player game", True, [255,255,255])
-    text7 = smallFont.render("Press A to start multiplayer game", True, [255,255,255])
+    nxtTxt = "Press A to continue"
+    text3 = smallFont.render(nxtTxt, True, [255,255,255])
+
+    chooseTxt = "Press + to play single player"
+    chooseTxt2 = "Press - to play multi player"
+    text4 = smallFont.render(chooseTxt, True, [0,0,0])
+    text5 = smallFont.render(chooseTxt2, True, [0,0,0])
+
+    wlcTxt2 = "Press 1 and 2 on your other wii remote at the same time."
+    text6 = smallFont.render(wlcTxt2, True, [0,0,0])
 
     #Simulation
     running = True
@@ -203,50 +210,67 @@ def welcomeScreen():
             if event.type == pygame.QUIT:
                 running = False
         
-        #Display
-        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
-        screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
-        screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
-        screen.blit(text2, [5,spTxtPos]) 
-        screen.blit(text3, [5,spTxtPos + 15]) 
-        screen.blit(text4, [5,mpTxtPos])
-        screen.blit(text5, [5,mpTxtPos + 15])
+        #Screen 1
+        if screen1:
+            #Display
+            screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
+            #screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
+            screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
+            screen.blit(text2, [(400 - smallFont.size(wlcTxt)[0]) // 2,wlcTxtPos]) 
 
-        pygame.display.flip()
+            pygame.display.flip()
+       
+            #Connect Wii remote
+            while wm1 == None:
+                wm1 = wiimoteSetup(1)
 
-        #Connect Wiimote 1
-        while wm1 == None:
-            wm1 = wiimoteSetup(1)
+            #Show blue wii remote
+            imgWiimote = wiimoteImgSetup("./wiimote_diagram_backup.png") 
+            screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
 
-        #Show connected remote image
-        imgWiimote = wiimoteImgSetup("./wiimote_diagram_backup.png")
-        screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
+            #Continue Prompt
+            drawCornerRect(screen)
+            screen.blit(text3, [260,375])
 
-        #Prompt single player game
-        if wm2 == None:
-            pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
-            screen.blit(text6, [150,375])
+            pygame.display.flip()
 
-        pygame.display.flip()
+            if wm1.state['buttons'] & cwiid.BTN_A:
+                screen.fill([250, 200, 150])
+                screen1 = False
+                screen2 = True
 
-        #Start single player game
-        if wm1.state['buttons'] & cwiid.BTN_A:
-            singlePlayerGame(wm1)
-            running = False
+        elif screen2:
+            #Display
+            screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10])
+            screen.blit(text4, [(400 - smallFont.size(chooseTxt)[0]) // 2,70])
+            screen.blit(text5, [(400 - smallFont.size(chooseTxt2)[0]) // 2,100])
 
-        else:
-            #Connect 2nd wii remote
-            if wm2 == None:
+            pygame.display.flip()
+
+            if wm1.state['buttons'] & cwiid.BTN_PLUS:
+                singlePlayerGame(wm1)
+
+            elif wm1.state['buttons'] & cwiid.BTN_MINUS:
+                screen.fill([250, 200, 150])
+                screen2 = False
+                screen3 = True
+
+        elif screen3:
+            #Display
+            screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
+            screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
+            screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
+            screen.blit(text6, [(400 - smallFont.size(wlcTxt2)[0]) // 2,wlcTxtPos]) 
+
+            pygame.display.flip()
+            
+            #Connect second wii remote
+            while wm2 == None:
                 wm2 = wiimoteSetup(2)
 
-            #Update GUI for multiplayer mode
-            if wm2 != None:
-                imgWiimote2 = wiimoteImgSetup("./wiimote_diagram_backup.png")
-                screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2,remote1Pos + 100])
-                
-                #Prompt multiplayer game
-                pygame.draw.rect(screen, [0,0,0], [140, 373, 240, 20])
-                screen.blit(text7, [150,375])
+            #Show blue wii remote
+            imgWiimote2 = wiimoteImgSetup("./wiimote_diagram_backup.png") 
+            screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
 
 def singlePlayerGame(wm):
     global delay
@@ -254,7 +278,7 @@ def singlePlayerGame(wm):
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
     clock = pygame.time.Clock()
-    pygame.display.set_caption("Snake")
+    pygame.display.set_caption("Wiisnake")
 
     #Get high score
     try:

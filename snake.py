@@ -182,6 +182,7 @@ def welcomeScreen():
 
     #Text configs
     smallFont = pygame.font.Font(None, 20)
+    medFont = pygame.font.Font(None, 30)
 
     titleTxt = "Welcome to Wiisnake!"
     text1 = font.render(titleTxt, True, [0,0,0])
@@ -195,8 +196,8 @@ def welcomeScreen():
 
     chooseTxt = "Press + to play single player"
     chooseTxt2 = "Press - to play multi player"
-    text4 = smallFont.render(chooseTxt, True, [0,0,0])
-    text5 = smallFont.render(chooseTxt2, True, [0,0,0])
+    text4 = medFont.render(chooseTxt, True, [0,0,0])
+    text5 = medFont.render(chooseTxt2, True, [0,0,0])
 
     wlcTxt2 = "Press 1 and 2 on your other wii remote at the same time."
     text6 = smallFont.render(wlcTxt2, True, [0,0,0])
@@ -244,17 +245,18 @@ def welcomeScreen():
 
         elif screen2:
             #Display
-            pygame.draw.rect(screen,[255,100,100],[(400 - smallFont.size(chooseTxt)[0]) // 2,70,smallFont.size(chooseTxt)[0],smallFont.size(chooseTxt)[1]])
-            pygame.draw.rect(screen,[100,100,255],[(400 - smallFont.size(chooseTxt2)[0]) // 2,100,smallFont.size(chooseTxt2)[0],smallFont.size(chooseTxt2)[1]])
+            pygame.draw.rect(screen,[255,100,100],[(400 - medFont.size(chooseTxt)[0]) // 2 - 20,120,medFont.size(chooseTxt)[0] + 40,medFont.size(chooseTxt)[1] * 2])
+            pygame.draw.rect(screen,[150,150,255],[(400 - medFont.size(chooseTxt2)[0]) // 2 - 20,240,medFont.size(chooseTxt2)[0] + 40,medFont.size(chooseTxt2)[1] * 2])
 
             screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10])
-            screen.blit(text4, [(400 - smallFont.size(chooseTxt)[0]) // 2,70])
-            screen.blit(text5, [(400 - smallFont.size(chooseTxt2)[0]) // 2,100])
+            screen.blit(text4, [(400 - medFont.size(chooseTxt)[0]) // 2,128])
+            screen.blit(text5, [(400 - medFont.size(chooseTxt2)[0]) // 2,248])
 
             pygame.display.flip()
 
             if wm1.state['buttons'] & cwiid.BTN_PLUS:
                 singlePlayerGame(wm1)
+                running = False
 
             elif wm1.state['buttons'] & cwiid.BTN_MINUS:
                 screen.fill([250, 200, 150])
@@ -284,8 +286,8 @@ def welcomeScreen():
 
             #Start game
             if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2.state['buttons'] & cwiid.BTN_A):
-                print("it works")
                 multiplayerGame(wm1,wm2)
+                running =  False
 
 def singlePlayerGame(wm):
     global delay

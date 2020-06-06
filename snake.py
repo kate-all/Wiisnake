@@ -32,7 +32,12 @@ class Snake:
     def draw(self, screen):
         for pos in self.prevPos:
             pygame.draw.rect(screen, self.colour, [pos[X], pos[Y], self.size, self.size])
-            pygame.draw.rect(screen, [160,0,0], [pos[X], pos[Y], self.size, self.size], 1)
+
+            #Red snake outline
+            if self.colour == [255,0,0]:
+                pygame.draw.rect(screen, [160,0,0], [pos[X], pos[Y], self.size, self.size], 1)
+            elif self.colour == [0,255,0]:
+                pygame.draw.rect(screen, [0,160,0], [pos[X], pos[Y], self.size, self.size], 1)
     
     def move(self, inc):
         '''This function will move the snake one increment in the direction its head is travelling'''
@@ -393,5 +398,169 @@ def singlePlayerGame(wm):
 
 def multiplayerGame(wm1,wm2):
     '''This is the multiplayer version of wiisnake'''
+    global delay
+
+    #Set up pygame
+    screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
+    clock = pygame.time.Clock()
+    pygame.display.set_caption("Wiisnake")
+
+    #Get high score
+    try:
+        hsFile = open("./highScore.txt", 'r')
+        currentHighScore = hsFile.readline().strip()
+    except:
+        print("Error opening hsFile")
+    hsFile.close()
+
+    #Initialize Snake objects and food
+    snek1 = Snake()
+    snek2 = Snake()
+    snek2.colour = [0,255,0] #Change snake 2 colour to green
+    snek1.currentPos = [int(WINDOW_WIDTH / 2) - 10, int((WINDOW_HEIGHT - 50) / 2)]
+    snek2.currentPos = [int(WINDOW_WIDTH / 2) + 10, int((WINDOW_HEIGHT - 50) / 2)]
+    
+    currentFood = Food()
+    
+    #Simulation loop:
+    running = True
+    while running:
+
+        #Quit
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+
+        #Handle user input for snake 1  NOTE: Turn wiimote sideways
+        #Down
+        if ((wm1.state['buttons'] & cwiid.BTN_LEFT) and
+                ((snek1.headDir != "U" and snek1.length > 1) or (snek1.length == 1))): #Snake cannot move on top of its tail
+            snek1.headDir = "D"
+            time.sleep(delay)         
+        
+        #Up
+        elif ((wm1.state['buttons'] & cwiid.BTN_RIGHT) and 
+                ((snek1.headDir != "D" and snek1.length > 1) or (snek1.length == 1))):
+            snek1.headDir = "U"
+            time.sleep(delay)          
+
+        #Left
+        elif ((wm1.state['buttons'] & cwiid.BTN_UP) and
+                ((snek1.headDir != "R" and snek1.length > 1) or (snek1.length == 1))): 
+            snek1.headDir = "L"
+            time.sleep(delay)          
+        
+        #Right
+        elif ((wm1.state['buttons'] & cwiid.BTN_DOWN) and 
+                ((snek1.headDir != "L" and snek1.length > 1) or (snek1.length == 1))):
+            snek1.headDir = "R"
+            time.sleep(delay) 
+        
+        #Handle user input for snake 2
+        #Down
+        if ((wm2.state['buttons'] & cwiid.BTN_LEFT) and
+                ((snek2.headDir != "U" and snek2.length > 1) or (snek2.length == 1))): #Snake cannot move on top of its tail
+            snek2.headDir = "D"
+            time.sleep(delay)         
+        
+        #Up
+        elif ((wm2.state['buttons'] & cwiid.BTN_RIGHT) and 
+                ((snek2.headDir != "D" and snek2.length > 1) or (snek2.length == 1))):
+            snek2.headDir = "U"
+            time.sleep(delay)          
+
+        #Left
+        elif ((wm2.state['buttons'] & cwiid.BTN_UP) and
+                ((snek2.headDir != "R" and snek2.length > 1) or (snek2.length == 1))): 
+            snek2.headDir = "L"
+            time.sleep(delay)          
+        
+        #Right
+        elif ((wm2.state['buttons'] & cwiid.BTN_DOWN) and 
+                ((snek2.headDir != "L" and snek2.length > 1) or (snek2.length == 1))):
+            snek2.headDir = "R"
+            time.sleep(delay) 
+
+        #Move Snake
+        snek1.move(snek1.size)
+        snek2.move(snek2.size)
+        time.sleep(delay)
+
+        #Draw background
+        screen.fill([0,0,0])
+        
+        #Draw foreground
+        currentFood.draw(screen)
+        snek1.draw(screen)
+        snek2.draw(screen)
+
+        pygame.draw.rect(screen, [25,100,220], [0, WINDOW_HEIGHT - 50, WINDOW_WIDTH, 50]) #Bottom blue block
+
+        #Text
+        #textLength = font.render("Length: " + str(snek1.length), True, [0,0,0])
+        #screen.blit(textLength, [20,WINDOW_HEIGHT - textLength.get_height() - 15]) 
+
+        #textHighScore = font.render("High Score: " + currentHighScore, True, [0,0,0])
+        #screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 40, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
+
+        #Check if...
+        #Snake 1 hits the edge
+        if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
+                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
+            print("Player 2 wins")
+            running = False
+
+        #Snake 1 hits itself
+        if snek1.currentPos in snek1.prevPos[:-1]:
+            print("Player 2 wins")
+            running = False
+
+        #Snake 1 eats food 
+        if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
+            snek1.eatFood()
+            currentFood.move(snek1)
+
+            #Speed up snake
+            if delay >= 0.04:
+                delay -= 0.003
+        
+        #Snake 2 hits the edge
+        if ((snek2.currentPos[X] < 0 or int(snek2.currentPos[X]) + int(snek2.size) > WINDOW_WIDTH) or 
+                (snek2.currentPos[Y] < 0 or int(snek2.currentPos[Y]) + int(snek2.size) > WINDOW_HEIGHT - 50)):
+            print("Player 1 wins")
+            running = False
+
+        #Snake 2 hits itself
+        if snek2.currentPos in snek2.prevPos[:-1]:
+            print("Player 1 wins")
+            running = False
+
+        #Snake 2 eats food 
+        if (snek2.currentPos[X] == currentFood.currentPos[X] and snek2.currentPos[Y] == currentFood.currentPos[Y]):
+            snek2.eatFood()
+            currentFood.move(snek2)
+
+            #Speed up snake
+            if delay >= 0.04:
+                delay -= 0.003
+
+        #Check for collisions
+        #Snake 1 collides with snake 2
+        if snek1.currentPos in snek2.prevPos[:-1]:
+            print("Player 2 wins")
+
+        #Snake 2 collides with snake 1
+        if snek2.currentPos in snek1.prevPos[:-1]:
+            print("Player 1 wins")
+
+        #Head on collision
+        if snek1.currentPos == snek2.currentPos:
+            print("No winners/tie")
+
+        #Refresh
+        pygame.display.flip()
+        clock.tick(300)  
+
 
 welcomeScreen()

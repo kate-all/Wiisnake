@@ -244,6 +244,9 @@ def welcomeScreen():
 
         elif screen2:
             #Display
+            pygame.draw.rect(screen,[255,100,100],[(400 - smallFont.size(chooseTxt)[0]) // 2,70,smallFont.size(chooseTxt)[0],smallFont.size(chooseTxt)[1]])
+            pygame.draw.rect(screen,[100,100,255],[(400 - smallFont.size(chooseTxt2)[0]) // 2,100,smallFont.size(chooseTxt2)[0],smallFont.size(chooseTxt2)[1]])
+
             screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10])
             screen.blit(text4, [(400 - smallFont.size(chooseTxt)[0]) // 2,70])
             screen.blit(text5, [(400 - smallFont.size(chooseTxt2)[0]) // 2,100])

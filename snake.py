@@ -226,7 +226,7 @@ def gameOver(winner, wm1, wm2):
             pygame.display.flip()
 
             #Move to Screen 2
-            if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2 != None and wm2.state['buttons'] & cwiid.BTN_A):
+            if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2 != None and (wm2.state['buttons'] & cwiid.BTN_A)):
                 screen.fill([250, 200, 150])
                 screen1 = False
                 screen2 = True

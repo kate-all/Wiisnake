@@ -137,10 +137,6 @@ def wiimoteSetup(playerNum):
 
     return wm
 
-def gameOverScreen():
-    '''Displays a game over message and provides the player options to play again,
-    return to the menu, or quit'''
-
 def calcHighScore(highScore, currentScore):
     '''Checks if a new high score has been earned, and replaces it if necessary
     Takes in: An integer representing the current high score and an integer representing the current score'''

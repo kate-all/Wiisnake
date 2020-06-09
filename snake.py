@@ -163,6 +163,75 @@ def wiimoteImgSetup(filePath):
 def drawCornerRect(screen):
     pygame.draw.rect(screen, [0,0,0], [250, 373, 145, 20])
 
+def gameOver(winner, wm1, wm2):
+    '''Displays a game over window displaying the winner
+    Takes in: A string representing which player won, or if there was a tie. Both wii remote objects.
+    If there is no second remote connected, pass None to this method.'''
+
+    #Screen configs
+    screen1 = True
+    screen2 = False
+
+    screen = pygame.display.set_mode([300, 200])
+    screen.fill([250, 200, 150])
+    pygame.display.set_caption("Game Over")
+
+    #Text Configs
+    medFont = pygame.font.Font(None, 50)
+    smallFont = pygame.font.Font(None, 20)
+
+    #Winner display
+    tieCount = 1
+    if winner == "Tie":
+        winnerTxt = "Tie!"
+        medFont = pygame.font.Font(None, 100)
+        textWinner = medFont.render(winnerTxt, True, [255,0,0])
+        tieCount = 0
+    else:
+        winnerTxt = winner + " wins!"
+
+        if winner == "Player 1":
+            textWinner = medFont.render(winnerTxt, True, [200,0,0])
+
+        else:
+            textWinner = medFont.render(winnerTxt, True, [0,200,0])
+
+    #Continue Prompt
+    contTxt = "Press A to continue"
+    textCont = smallFont.render(contTxt, True, [0,0,0])
+
+    #Simulation
+    running = True
+    while running:
+        #Quit
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+
+        if screen1:
+            #Display
+            #Flashing Tie
+            if tieCount % 500 == 0:
+                textWinner = medFont.render(winnerTxt, True, [0,200,0])
+            elif tieCount % 250 == 0:
+                textWinner = medFont.render(winnerTxt, True, [200,0,0])
+
+            if winner == "Tie":
+                tieCount += 1
+
+            screen.blit(textWinner, [(300 - medFont.size(winnerTxt)[0]) // 2,(200 - medFont.size(winnerTxt)[1]) // 2])
+            screen.blit(textCont, [300 - (smallFont.size(contTxt)[0] + 10),200 - (smallFont.size(contTxt)[1] + 10)])
+
+            pygame.display.flip()
+
+            #Move to Screen 2
+            if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2 != None and wm2.state['buttons'] & cwiid.BTN_A):
+                screen.fill([250, 200, 150])
+                screen1 = False
+                screen2 = True
+
+
 def welcomeScreen():
     '''Displays a welcome screen for user to connect their wii remote(s) to.'''
     #Wii remote objects
@@ -504,18 +573,7 @@ def multiplayerGame(wm1,wm2):
         #textHighScore = font.render("High Score: " + currentHighScore, True, [0,0,0])
         #screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 40, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
 
-        #Check if...
-        #Snake 1 hits the edge
-        if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
-                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
-            print("Player 2 wins")
-            running = False
-
-        #Snake 1 hits itself
-        if snek1.currentPos in snek1.prevPos[:-1]:
-            print("Player 2 wins")
-            running = False
-
+        #Check if snakes eat food
         #Snake 1 eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
@@ -524,7 +582,28 @@ def multiplayerGame(wm1,wm2):
             #Speed up snake
             if delay >= 0.04:
                 delay -= 0.003
-        
+
+        #Snake 2 eats food 
+        if (snek2.currentPos[X] == currentFood.currentPos[X] and snek2.currentPos[Y] == currentFood.currentPos[Y]):
+            snek2.eatFood()
+            currentFood.move(snek2)
+
+            #Speed up snake
+            if delay >= 0.04:
+                delay -= 0.003#Check if...
+
+        #Game over cases:
+        #Snake 1 hits the edge
+        if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
+                (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
+            gameOver("Player 2", wm1, wm2)
+            running = False
+
+        #Snake 1 hits itself
+        if snek1.currentPos in snek1.prevPos[:-1]:
+            print("Player 2 wins")
+            running = False
+
         #Snake 2 hits the edge
         if ((snek2.currentPos[X] < 0 or int(snek2.currentPos[X]) + int(snek2.size) > WINDOW_WIDTH) or 
                 (snek2.currentPos[Y] < 0 or int(snek2.currentPos[Y]) + int(snek2.size) > WINDOW_HEIGHT - 50)):
@@ -536,16 +615,6 @@ def multiplayerGame(wm1,wm2):
             print("Player 1 wins")
             running = False
 
-        #Snake 2 eats food 
-        if (snek2.currentPos[X] == currentFood.currentPos[X] and snek2.currentPos[Y] == currentFood.currentPos[Y]):
-            snek2.eatFood()
-            currentFood.move(snek2)
-
-            #Speed up snake
-            if delay >= 0.04:
-                delay -= 0.003
-
-        #Check for collisions
         #Snake 1 collides with snake 2
         if snek1.currentPos in snek2.prevPos[:-1]:
             print("Player 2 wins")
@@ -561,6 +630,4 @@ def multiplayerGame(wm1,wm2):
         #Refresh
         pygame.display.flip()
         clock.tick(300)  
-
-
 welcomeScreen()

@@ -192,9 +192,26 @@ def gameOver(winner, wm1, wm2):
         else:
             textWinner = medFont.render(winnerTxt, True, [0,200,0])
 
-    #Continue Prompt
     contTxt = "Press A to continue"
     textCont = smallFont.render(contTxt, True, [0,0,0])
+    
+    menu1Txt = "Play again"
+    textMenu1 = smallFont.render(menu1Txt, True, [0,0,0])
+    
+    menu2Txt = "Play single player mode"
+    textMenu2 = smallFont.render(menu2Txt, True, [0,0,0])
+
+    menu3Txt = "Exit"
+    textMenu3 = smallFont.render(menu3Txt, True, [0,0,0])
+
+    plusText = "+"
+    textPlus = medFont.render(plusText, True, [0,0,0])
+
+    aText = "A"
+    textA = medFont.render(aText, True, [0,0,0])
+
+    minusText = "-"
+    textMinus = medFont.render(minusText, True, [0,0,0])
 
     #Simulation
     running = True
@@ -227,6 +244,24 @@ def gameOver(winner, wm1, wm2):
                 screen1 = False
                 screen2 = True
 
+        elif screen2:
+            #Display
+            pygame.display.set_caption("Menu")
+            screen.fill([250, 200, 150])
+
+            pygame.draw.rect(screen,[255,100,100],[(300 - smallFont.size(menu1Txt)[0]) // 2 - 65,25,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[150,150,255],[(300 - smallFont.size(menu2Txt)[0]) // 2 - 20,75,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[200,255,200],[(300 - smallFont.size(menu3Txt)[0]) // 2 - 85,125,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+
+            screen.blit(textMenu1, [(300 - smallFont.size(menu1Txt)[0]) // 2,32])
+            screen.blit(textMenu2, [(300 - smallFont.size(menu2Txt)[0]) // 2,82])
+            screen.blit(textMenu3, [(300 - smallFont.size(menu3Txt)[0]) // 2,132])
+
+            screen.blit(textPlus, [15,27])
+            screen.blit(textA, [13,78])
+            screen.blit(textMinus, [20,127])
+
+            pygame.display.flip()
 
 def welcomeScreen():
     '''Displays a welcome screen for user to connect their wii remote(s) to.'''

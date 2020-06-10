@@ -139,15 +139,19 @@ def wiimoteSetup(playerNum):
 
 def calcHighScore(highScore, currentScore):
     '''Checks if a new high score has been earned, and replaces it if necessary
-    Takes in: An integer representing the current high score and an integer representing the current score'''
+    Takes in: An integer representing the current high score and an integer representing the current score
+    Returns: A boolean value that is true if a new high score has been achieved, and false otherwise.'''
     if currentScore > highScore:
         try:
             hsFile = open("./highScore.txt", 'w')
             hsFile.write(str(currentScore))
         except:
             print("hsFile not opening")
-        
+        return True
+
         hsFile.close()
+
+    return False
 
 def wiimoteImgSetup(filePath):
     '''Configures the wii remote image and returns the finished product'''
@@ -158,6 +162,123 @@ def wiimoteImgSetup(filePath):
 
 def drawCornerRect(screen):
     pygame.draw.rect(screen, [0,0,0], [250, 373, 145, 20])
+
+def gameOver1Player(isHighScore, score, wm1, wm2):
+    '''Displays a game over window displaying the winner.
+    Takes in: A boolean representing if the user achieved a new high score, the player's current score,
+    the first wii remote, and the second wii remote, which will be None if not connected.'''
+
+    #Screen configs
+    screen1 = True
+    screen2 = False
+
+    screen = pygame.display.set_mode([300, 200])
+    screen.fill([250, 200, 150])
+    pygame.display.set_caption("Game Over")
+
+    #Text Configs
+    medFont = pygame.font.Font(None, 50)
+    smallFont = pygame.font.Font(None, 20)
+    otherFont = pygame.font.Font(None, 40)
+
+    #Score display
+    hsCount = 1
+    if isHighScore:
+        newHSTxt = "New High Score!"
+        textNewHS = medFont.render(newHSTxt, True, [200,0,0])
+
+        hsCount = 0
+
+    scoreTxt = "Your Score: " + str(score)
+    textScore = medFont.render(scoreTxt, True, [0,0,0])
+
+    contTxt = "Press A to continue"
+    textCont = smallFont.render(contTxt, True, [0,0,0])
+    
+    menu1Txt = "Play again"
+    textMenu1 = smallFont.render(menu1Txt, True, [0,0,0])
+    
+    menu2Txt = "Play multiplayer mode"
+    textMenu2 = smallFont.render(menu2Txt, True, [0,0,0])
+
+    menu3Txt = "Exit"
+    textMenu3 = smallFont.render(menu3Txt, True, [0,0,0])
+
+    plusText = "+"
+    textPlus = otherFont.render(plusText, True, [0,0,0])
+
+    oneText = "1"
+    text1 = otherFont.render(oneText, True, [0,0,0])
+
+    minusText = "-"
+    textMinus = otherFont.render(minusText, True, [0,0,0])
+
+    #Simulation
+    running = True
+    while running:
+        #Quit
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+
+        if screen1:
+            #Display
+            #Flashing high score
+            if hsCount % 500 == 0:
+                textNewHS = medFont.render(newHSTxt, True, [0,200,0])
+            elif hsCount % 250 == 0:
+                textNewHS = medFont.render(winnerTxt, True, [200,0,0])
+
+            if isHighScore:
+                tieCount += 1
+                screen.blit(textNewHS, [(300 - medFont.size(newHSTxt)[0]) // 2,120])
+
+            screen.blit(textScore, [(300 - medFont.size(scoreTxt)[0]) // 2,(200 - medFont.size(scoreTxt)[1]) // 2])
+            screen.blit(textCont, [300 - (smallFont.size(contTxt)[0] + 10),200 - (smallFont.size(contTxt)[1] + 10)])
+
+            pygame.display.flip()
+
+            #Move to Screen 2
+            if (wm1.state['buttons'] & cwiid.BTN_A) or (wm2 != None and (wm2.state['buttons'] & cwiid.BTN_A)):
+                screen.fill([250, 200, 150])
+                screen1 = False
+                screen2 = True
+
+        elif screen2:
+            #Display
+            pygame.display.set_caption("Menu")
+            screen.fill([250, 200, 150])
+
+            pygame.draw.rect(screen,[255,100,100],[(300 - smallFont.size(menu1Txt)[0]) // 2 - 65,25,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[150,150,255],[(300 - smallFont.size(menu2Txt)[0]) // 2 - 20,75,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[200,255,200],[(300 - smallFont.size(menu3Txt)[0]) // 2 - 85,125,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+
+            screen.blit(textMenu1, [(300 - smallFont.size(menu1Txt)[0]) // 2,32])
+            screen.blit(textMenu2, [(300 - smallFont.size(menu2Txt)[0]) // 2,82])
+            screen.blit(textMenu3, [(300 - smallFont.size(menu3Txt)[0]) // 2,132])
+
+            screen.blit(textPlus, [15,20])
+            screen.blit(text1, [15,75])
+            screen.blit(textMinus, [18,125])
+
+            pygame.display.flip()
+
+            #Interaction
+            if (wm1.state['buttons'] & cwiid.BTN_PLUS) or (wm2 != None and (wm2.state['buttons'] & cwiid.BTN_PLUS)):
+                singlePlayerGame(wm1,wm2)
+                quit()
+
+            elif (wm1.state['buttons'] & cwiid.BTN_1) or (wm2 != None and (wm2.state['buttons'] & cwiid.BTN_1)):
+                if wm2 == None:
+                    welcomeScreen(True, wm1) #Starts at screen 3 to connect second wii remote
+                else:
+                    multiplayerGame(wm1,wm2)
+                quit()
+
+            elif (wm1.state['buttons'] & cwiid.BTN_MINUS) or (wm2 != None and (wm2.state['buttons'] & cwiid.BTN_MINUS)):
+                running = False
+                quit()
 
 def gameOver2Player(winner, wm1, wm2):
     '''Displays a game over window displaying the winner.
@@ -269,23 +390,24 @@ def gameOver2Player(winner, wm1, wm2):
                 quit()
 
             elif (wm1.state['buttons'] & cwiid.BTN_1) or (wm2.state['buttons'] & cwiid.BTN_1):
-                singlePlayerGame(wm1)
+                singlePlayerGame(wm1,wm2)
                 quit()
 
             elif (wm1.state['buttons'] & cwiid.BTN_MINUS) or (wm2.state['buttons'] & cwiid.BTN_MINUS):
                 running = False
                 quit()
 
-def welcomeScreen():
-    '''Displays a welcome screen for user to connect their wii remote(s) to.'''
+def welcomeScreen(isScreen3, wm1):
+    '''Displays a welcome screen for user to connect their wii remote(s) to, and select game mode.
+    Takes in: A boolean that when, true, skips right to screen 3. When false, it starts at screen 1.'''
     #Wii remote objects
-    wm1 = None
+    wm1 = wm1
     wm2 = None
 
     #Screen flags
-    screen1 = True
-    screen2 = False
-    screen3 = False
+    screen1 = not isScreen3
+    screen2 = not isScreen3
+    screen3 = isScreen3
     
     #Screen configs
     screen = pygame.display.set_mode([400, 400])
@@ -332,7 +454,6 @@ def welcomeScreen():
             if event.type == pygame.QUIT:
                 running = False
         
-        #Screen 1
         if screen1:
             #Display
             screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
@@ -374,7 +495,7 @@ def welcomeScreen():
 
             #Interaction
             if wm1.state['buttons'] & cwiid.BTN_PLUS:
-                singlePlayerGame(wm1)
+                singlePlayerGame(wm1,wm2)
                 running = False
 
             elif wm1.state['buttons'] & cwiid.BTN_MINUS:
@@ -384,6 +505,8 @@ def welcomeScreen():
 
         elif screen3:
             #Display
+            imgWiimote = wiimoteImgSetup("./wiimote_diagram_backup.png") #Make First wii remote blue 
+
             screen.blit(imgWiimote, [(400 - imgWiimote.get_size()[0]) // 2,remote1Pos])
             screen.blit(imgWiimote2, [(400 - imgWiimote2.get_size()[0]) // 2, remote1Pos + 100])
             screen.blit(text1, [(400 - font.size(titleTxt)[0]) // 2,10]) 
@@ -408,7 +531,7 @@ def welcomeScreen():
                 multiplayerGame(wm1,wm2)
                 running =  False
 
-def singlePlayerGame(wm):
+def singlePlayerGame(wm, otherRemote):
     global delay
 
     #Set up pygame
@@ -487,14 +610,14 @@ def singlePlayerGame(wm):
         #Snake hits the edge
         if ((snek1.currentPos[X] < 0 or int(snek1.currentPos[X]) + int(snek1.size) > WINDOW_WIDTH) or 
                 (snek1.currentPos[Y] < 0 or int(snek1.currentPos[Y]) + int(snek1.size) > WINDOW_HEIGHT - 50)):
-            print("Game over")
-            calcHighScore(int(currentHighScore), snek1.length)
+            isHighScore = calcHighScore(int(currentHighScore), snek1.length)
+            gameOver1Player(isHighScore, snek1.length, wm, otherRemote)
             running = False
 
         #Snake hits itself
         if snek1.currentPos in snek1.prevPos[:-1]:
-            print("Game over 2")
-            calcHighScore(int(currentHighScore), snek1.length)
+            isHighScore = calcHighScore(int(currentHighScore), snek1.length)
+            gameOver1Player(isHighScore, snek1.length, wm, otherRemote)
             running = False
 
         #Snake eats food 
@@ -658,4 +781,4 @@ def multiplayerGame(wm1,wm2):
         #Refresh
         pygame.display.flip()
         clock.tick(300)  
-welcomeScreen()
+welcomeScreen(False, None)

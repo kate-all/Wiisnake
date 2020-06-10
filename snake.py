@@ -116,12 +116,12 @@ class Food:
     def draw(self, screen):
         pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
 
-    def move(self, snake1):
+    def move(self, snake1, snake2):
         flag = True
         while flag:
             self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size - 50)]
             self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
-            flag =  self.currentPos in snake1.prevPos
+            flag =  (self.currentPos in snake1.prevPos) or (snake2 != None and (self.currentPos in snake2.prevPos))
 
 #Global methods
 def wiimoteSetup(playerNum):
@@ -623,7 +623,7 @@ def singlePlayerGame(wm, otherRemote):
         #Snake eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
-            currentFood.move(snek1)
+            currentFood.move(snek1, None)
 
             #Speed up snake
             if delay >= 0.04:
@@ -728,7 +728,7 @@ def multiplayerGame(wm1,wm2):
         #Snake 1 eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
             snek1.eatFood()
-            currentFood.move(snek1)
+            currentFood.move(snek1, snek2)
 
             #Speed up snake
             if delay >= 0.04:
@@ -737,7 +737,7 @@ def multiplayerGame(wm1,wm2):
         #Snake 2 eats food 
         if (snek2.currentPos[X] == currentFood.currentPos[X] and snek2.currentPos[Y] == currentFood.currentPos[Y]):
             snek2.eatFood()
-            currentFood.move(snek2)
+            currentFood.move(snek1, snek2)
 
             #Speed up snake
             if delay >= 0.04:

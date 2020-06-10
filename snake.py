@@ -515,17 +515,9 @@ def multiplayerGame(wm1,wm2):
     global delay
 
     #Set up pygame
-    screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
+    screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT - 50])
     clock = pygame.time.Clock()
     pygame.display.set_caption("Wiisnake")
-
-    #Get high score
-    try:
-        hsFile = open("./highScore.txt", 'r')
-        currentHighScore = hsFile.readline().strip()
-    except:
-        print("Error opening hsFile")
-    hsFile.close()
 
     #Initialize Snake objects and food
     snek1 = Snake()
@@ -609,15 +601,6 @@ def multiplayerGame(wm1,wm2):
         snek1.draw(screen)
         snek2.draw(screen)
 
-        pygame.draw.rect(screen, [25,100,220], [0, WINDOW_HEIGHT - 50, WINDOW_WIDTH, 50]) #Bottom blue block
-
-        #Text
-        #textLength = font.render("Length: " + str(snek1.length), True, [0,0,0])
-        #screen.blit(textLength, [20,WINDOW_HEIGHT - textLength.get_height() - 15]) 
-
-        #textHighScore = font.render("High Score: " + currentHighScore, True, [0,0,0])
-        #screen.blit(textHighScore, [WINDOW_WIDTH - textHighScore.get_width() - 40, WINDOW_HEIGHT - textHighScore.get_height() - 15]) 
-
         #Check if snakes eat food
         #Snake 1 eats food 
         if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
@@ -635,7 +618,7 @@ def multiplayerGame(wm1,wm2):
 
             #Speed up snake
             if delay >= 0.04:
-                delay -= 0.003#Check if...
+                delay -= 0.003
 
         #Game over cases:
         #Snake 1 hits the edge

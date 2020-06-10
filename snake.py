@@ -185,7 +185,7 @@ def gameOver1Player(isHighScore, score, wm1, wm2):
     hsCount = 1
     if isHighScore:
         newHSTxt = "New High Score!"
-        textNewHS = medFont.render(newHSTxt, True, [200,0,0])
+        textNewHS = otherFont.render(newHSTxt, True, [200,0,0])
 
         hsCount = 0
 
@@ -226,13 +226,13 @@ def gameOver1Player(isHighScore, score, wm1, wm2):
             #Display
             #Flashing high score
             if hsCount % 500 == 0:
-                textNewHS = medFont.render(newHSTxt, True, [0,200,0])
+                textNewHS = otherFont.render(newHSTxt, True, [0,200,0])
             elif hsCount % 250 == 0:
-                textNewHS = medFont.render(winnerTxt, True, [200,0,0])
+                textNewHS = otherFont.render(newHSTxt, True, [200,0,0])
 
             if isHighScore:
-                tieCount += 1
-                screen.blit(textNewHS, [(300 - medFont.size(newHSTxt)[0]) // 2,120])
+                hsCount += 1
+                screen.blit(textNewHS, [(300 - otherFont.size(newHSTxt)[0]) // 2,30])
 
             screen.blit(textScore, [(300 - medFont.size(scoreTxt)[0]) // 2,(200 - medFont.size(scoreTxt)[1]) // 2])
             screen.blit(textCont, [300 - (smallFont.size(contTxt)[0] + 10),200 - (smallFont.size(contTxt)[1] + 10)])

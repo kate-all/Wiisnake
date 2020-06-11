@@ -15,9 +15,6 @@ Y = 1
 pygame.init()
 font = pygame.font.Font(None, 30)
 
-#Global Variable
-delay = 0.1
-
 #Snake class
 class Snake:
     def __init__ (self):
@@ -643,7 +640,9 @@ def multiplayerGame(wm1,wm2):
 
     #Initialize Snake objects and food
     snek1 = Snake()
+    snek1.headDir = "L"
     snek2 = Snake()
+    snek2.headDir = "R"
     snek2.colour = [0,255,0] #Change snake 2 colour to green
     snek1.currentPos = [int(WINDOW_WIDTH / 2) - 10, int((WINDOW_HEIGHT - 50) / 2)]
     snek2.currentPos = [int(WINDOW_WIDTH / 2) + 10, int((WINDOW_HEIGHT - 50) / 2)]

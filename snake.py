@@ -650,7 +650,8 @@ def multiplayerGame(wm1,wm2):
     snek1.currentPos = [int(WINDOW_WIDTH / 2) - 10, int((WINDOW_HEIGHT - 50) / 2)]
     snek2.currentPos = [int(WINDOW_WIDTH / 2) + 10, int((WINDOW_HEIGHT - 50) / 2)]
     
-    currentFood = Food()
+    currentFood1 = Food()
+    currentFood2 = Food()
     
     #Simulation loop:
     running = True
@@ -721,24 +722,43 @@ def multiplayerGame(wm1,wm2):
         screen.fill([0,0,0])
         
         #Draw foreground
-        currentFood.draw(screen)
+        currentFood1.draw(screen)
+        currentFood2.draw(screen)
         snek1.draw(screen)
         snek2.draw(screen)
 
         #Check if snakes eat food
-        #Snake 1 eats food 
-        if (snek1.currentPos[X] == currentFood.currentPos[X] and snek1.currentPos[Y] == currentFood.currentPos[Y]):
+        #Snake 1 eats food 1 
+        if (snek1.currentPos[X] == currentFood1.currentPos[X] and snek1.currentPos[Y] == currentFood1.currentPos[Y]):
             snek1.eatFood()
-            currentFood.move(snek1, snek2)
+            currentFood1.move(snek1, snek2)
 
             #Speed up snake
             if delay >= 0.04:
                 delay -= 0.003
 
-        #Snake 2 eats food 
-        if (snek2.currentPos[X] == currentFood.currentPos[X] and snek2.currentPos[Y] == currentFood.currentPos[Y]):
+        #Snake 1 eats food 2 
+        if (snek1.currentPos[X] == currentFood2.currentPos[X] and snek1.currentPos[Y] == currentFood2.currentPos[Y]):
+            snek1.eatFood()
+            currentFood2.move(snek1, snek2)
+
+            #Speed up snake
+            if delay >= 0.04:
+                delay -= 0.003
+
+        #Snake 2 eats food 1
+        if (snek2.currentPos[X] == currentFood1.currentPos[X] and snek2.currentPos[Y] == currentFood1.currentPos[Y]):
             snek2.eatFood()
-            currentFood.move(snek1, snek2)
+            currentFood1.move(snek1, snek2)
+
+            #Speed up snake
+            if delay >= 0.04:
+                delay -= 0.003
+
+        #Snake 2 eats food 2 
+        if (snek2.currentPos[X] == currentFood2.currentPos[X] and snek2.currentPos[Y] == currentFood2.currentPos[Y]):
+            snek2.eatFood()
+            currentFood2.move(snek1, snek2)
 
             #Speed up snake
             if delay >= 0.04:

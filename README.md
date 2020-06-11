@@ -10,7 +10,8 @@ Eat as many food items as you can! Each food eaten causes the snake to grow and 
 You lose if you touch your own tail or the edge of the screen. In multiplayer mode, you can also lose
 by colliding with your opponent's tail. Player 1 is the red snake, and player 2 is the green snake.
 
-Download rules: Download this project right here, on github. Then simply run the snake.py player on your
-raspberry pi! Make sure you have at least one wii remote.
+Download rules: Download this project right here, on github by pressing the green button, or by typing 
+git clone https://github.com/kate-all/Wiisnake.git into your command line. 
+Then simply run the snake.py player on your raspberry pi! Make sure you have at least one wii remote.
 
 Enjoy!

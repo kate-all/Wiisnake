@@ -250,9 +250,9 @@ def gameOver1Player(isHighScore, score, wm1, wm2):
             pygame.display.set_caption("Menu")
             screen.fill([250, 200, 150])
 
-            pygame.draw.rect(screen,[255,100,100],[(300 - smallFont.size(menu1Txt)[0]) // 2 - 65,25,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
-            pygame.draw.rect(screen,[150,150,255],[(300 - smallFont.size(menu2Txt)[0]) // 2 - 27,75,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
-            pygame.draw.rect(screen,[200,255,200],[(300 - smallFont.size(menu3Txt)[0]) // 2 - 85,125,smallFont.size(menu2Txt)[0] + 40,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[255,100,100],[(300 - smallFont.size(menu1Txt)[0]) // 2 - 65,25,smallFont.size(menu2Txt)[0] + 60,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[150,150,255],[(300 - smallFont.size(menu2Txt)[0]) // 2 - 27,75,smallFont.size(menu2Txt)[0] + 60,smallFont.size(menu2Txt)[1] * 2])
+            pygame.draw.rect(screen,[200,255,200],[(300 - smallFont.size(menu3Txt)[0]) // 2 - 85,125,smallFont.size(menu2Txt)[0] + 60,smallFont.size(menu2Txt)[1] * 2])
 
             screen.blit(textMenu1, [(300 - smallFont.size(menu1Txt)[0]) // 2,32])
             screen.blit(textMenu2, [(300 - smallFont.size(menu2Txt)[0]) // 2,82])
@@ -532,7 +532,7 @@ def welcomeScreen(isScreen3, wm1):
                 running =  False
 
 def singlePlayerGame(wm, otherRemote):
-    global delay
+    delay = 0.1
 
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT])
@@ -635,7 +635,8 @@ def singlePlayerGame(wm, otherRemote):
 
 def multiplayerGame(wm1,wm2):
     '''This is the multiplayer version of wiisnake'''
-    global delay
+
+    delay = 0.1
 
     #Set up pygame
     screen = pygame.display.set_mode([WINDOW_WIDTH,WINDOW_HEIGHT - 50])

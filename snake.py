@@ -110,8 +110,7 @@ class Food:
     def __init__(self):
         self.colour = [255, 255, 0]
         self.size = 10
-        self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size)]
-        self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
+        self.currentPos = [(random.randint(0, WINDOW_WIDTH - self.size)) // 10 * 10, (random.randint(0, WINDOW_HEIGHT - self.size)) // 10 * 10]
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.colour, [self.currentPos[X], self.currentPos[Y], self.size, self.size])
@@ -119,8 +118,7 @@ class Food:
     def move(self, snake1, snake2):
         flag = True
         while flag:
-            self.currentPos = [random.randint(0, WINDOW_WIDTH - self.size), random.randint(0, WINDOW_HEIGHT - self.size - 50)]
-            self.currentPos = [self.currentPos[X] - (self.currentPos[X] % 10), self.currentPos[Y] - (self.currentPos[Y] % 10)]
+            self.currentPos = [(random.randint(0, WINDOW_WIDTH - self.size)) // 10 * 10, (random.randint(0, WINDOW_HEIGHT - self.size)) // 10 * 10]
             flag =  (self.currentPos in snake1.prevPos) or (snake2 != None and (self.currentPos in snake2.prevPos))
 
 #Global methods

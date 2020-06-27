@@ -1,6 +1,6 @@
 # Wiisnake
 
-https://youtu.be/y7_D-ff5lWo
+[![Demo:](http://img.youtube.com/vi/y7_D-ff5lWo/0.jpg)](http://www.youtube.com/watch?v=y7_D-ff5lWo "Demo")
 
 The classic game of snake, played with a wii remote and a raspberry pi! 
 
